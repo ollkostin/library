@@ -1,11 +1,21 @@
 let offset = 0;
 let limit = 5;
+let totalCount;
 let books = $('#books');
 
-$(document).ready(()=> getBooks(offset, limit, showBooks, bookTableRowMapper, null));
+$(document).ready(() => {
+    getMoreBooks();
+});
 
-function showBooks(bookList, mapper) {
-    bookList.forEach(el => books.append(mapper(el)));
+function showBooks(response, mapper) {
+    offset = response.offset;
+    limit = response.limit;
+    totalCount = response.totalCount;
+    if (totalCount === (offset + 1) * limit)
+        $('#show-more').hide();
+    else
+        offset++;
+    response.data.forEach(el => books.append(mapper(el)));
 }
 
 function bookTableRowMapper(el) {
@@ -14,4 +24,9 @@ function bookTableRowMapper(el) {
     tr.append(buildElement(el['name'], 'td'));
     tr.append(buildElement(el['author'], 'td'));
     return tr;
+}
+
+
+function getMoreBooks() {
+    getBooks(offset, limit, showBooks, bookTableRowMapper, null);
 }

@@ -8,7 +8,6 @@ import ru.practice.kostin.library.dao.BookDao;
 import ru.practice.kostin.library.dao.extractor.ListBookResultSetExtractor;
 import ru.practice.kostin.library.model.Book;
 
-import java.sql.Types;
 import java.util.List;
 
 @Repository
@@ -16,8 +15,8 @@ public class BookDaoImpl implements BookDao {
     private String FETCH = "SELECT b.isn, b.name, b.author, u.id, u.username " +
             "FROM book b " +
             "LEFT JOIN user u ON u.id = b.user_id " +
-            "ORDER BY b.name";
-    private String FETCH_LIMIT_OFFSET = FETCH + " LIMIT ? OFFSET ?";
+            "ORDER BY b.author";
+    private String LIMIT_OFFSET = " LIMIT ? OFFSET ?";
     private String GET = "SELECT b.isn, b.name, b.author, b.user_id, u.id, u.username " +
             "FROM book b " +
             "LEFT JOIN user u ON u.id = b.user_id " +
@@ -25,10 +24,16 @@ public class BookDaoImpl implements BookDao {
     private String INSERT = "INSERT INTO book (isn,name,author) VALUES (?,?,?)";
     private String UPDATE = "UPDATE book SET name = ?, author = ?, user_id = ? WHERE isn = ?";
     private String DELETE = "DELETE FROM book WHERE isn = ?";
+    private String COUNT = "SELECT COUNT(*) FROM book b";
 
     private JdbcTemplate jdbcTemplate;
 
     private ListBookResultSetExtractor listBookResultSetExtractor = new ListBookResultSetExtractor();
+
+    @Override
+    public int count() {
+        return jdbcTemplate.queryForObject(COUNT, Integer.class);
+    }
 
     @Override
     public List<Book> fetch() {
@@ -39,7 +44,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> fetch(int offset, int limit) {
         return jdbcTemplate
-                .query(FETCH_LIMIT_OFFSET, new Object[]{limit, offset}, listBookResultSetExtractor);
+                .query(FETCH + LIMIT_OFFSET, new Object[]{limit, offset}, listBookResultSetExtractor);
     }
 
     @Override

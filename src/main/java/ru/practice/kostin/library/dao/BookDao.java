@@ -8,6 +8,8 @@ public interface BookDao {
 
     List<Book> fetch();
 
+    int count();
+
     List<Book> fetch(int offset,int limit);
 
     Book get(String isn);
