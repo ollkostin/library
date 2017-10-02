@@ -4,5 +4,21 @@
 </head>
 <body>
 <nav th:replace="fragments/navbar :: navbar"></nav>
+<div class="container">
+    <h2>Пользователи</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <td>Имя пользователя</td>
+        </tr>
+        </thead>
+        <tbody id="users">
+        </tbody>
+    </table>
+</div>
+<script src="./js/common.js"></script>
+<script src="./js/api-user.js"></script>
+<script src="./js/users.js"></script>
 </body>
 </html>
