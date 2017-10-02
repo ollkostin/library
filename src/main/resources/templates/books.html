@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:replace="fragments/head :: head">
+</head>
+<body>
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<div class="container">
+    <h2>Книги</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ISN</th>
+            <td>Название</td>
+            <td>Автор</td>
+        </tr>
+        </thead>
+        <tbody id="books">
+        </tbody>
+    </table>
+    <button id="show-more" class="btn btn-primary"
+            onclick="getMoreBooks()">
+        Показать больше
+    </button>
+</div>
+<script src="./js/common.js"></script>
+<script src="./js/api-book.js"></script>
+<script src="./js/books.js"></script>
+</body>
+</html>
