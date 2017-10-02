@@ -20,6 +20,9 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public User getUserByUsername(String username) {
+        return userDao.getByUsername(username);
+    }
 
     private UserDto buildUserDtoFromEntity(User user) {
         UserDto userDto = new UserDto();

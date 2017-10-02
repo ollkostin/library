@@ -1,6 +1,7 @@
 package ru.practice.kostin.library.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -49,8 +50,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book get(String isn) {
-        return jdbcTemplate
-                .queryForObject(GET, new Object[]{isn}, new BeanPropertyRowMapper<>(Book.class));
+        Book book;
+        try {
+            book = jdbcTemplate
+                    .queryForObject(GET, new Object[]{isn}, new BeanPropertyRowMapper<>(Book.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        return book;
     }
 
     @Override

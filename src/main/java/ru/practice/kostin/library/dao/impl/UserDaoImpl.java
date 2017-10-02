@@ -1,6 +1,7 @@
 package ru.practice.kostin.library.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,12 +29,25 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getById(Integer id) {
-        return jdbcTemplate.queryForObject(GET_BY_ID, new Object[]{id}, new BeanPropertyRowMapper<>(User.class));
+        User user;
+        try {
+            user = jdbcTemplate.queryForObject(GET_BY_ID, new Object[]{id}, new BeanPropertyRowMapper<>(User.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        return user;
+
     }
 
     @Override
     public User getByUsername(String username) {
-        return jdbcTemplate.queryForObject(GET_BY_USERNAME, new Object[]{username}, new BeanPropertyRowMapper<>(User.class));
+        User user;
+        try {
+            user = jdbcTemplate.queryForObject(GET_BY_USERNAME, new Object[]{username}, new BeanPropertyRowMapper<>(User.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        return user;
     }
 
     @Override
