@@ -3,6 +3,7 @@ package ru.practice.kostin.library.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practice.kostin.library.dao.BookDao;
+import ru.practice.kostin.library.dao.UserDao;
 import ru.practice.kostin.library.model.Book;
 import ru.practice.kostin.library.model.User;
 import ru.practice.kostin.library.service.dto.BookDto;
@@ -14,9 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
-
-    @Autowired
     private BookDao bookDao;
+    private UserDao userDao;
 
     public PageDto<BookDto> getBooks(int offset, int limit) {
         int totalCount = bookDao.count();
@@ -26,6 +26,24 @@ public class BookService {
                 .collect(Collectors.toList());
         PageDto<BookDto> pageDto = buildPageDto(bookDtos, offset, limit, totalCount);
         return pageDto;
+    }
+
+    public void takeBook(String isn, Integer userId) {
+        Book book = bookDao.get(isn);
+        //TODO:check user
+        User user = userDao.getById(userId);
+        book.setUser(user);
+        bookDao.update(book);
+    }
+
+    public void returnBook(String isn, Integer userId) {
+        Book book = bookDao.get(isn);
+        book.setUser(null);
+        bookDao.update(book);
+    }
+
+    public void deleteBook(String isn){
+        bookDao.delete(isn);
     }
 
     private BookDto buildBookDtoFromEntity(Book book) {
@@ -53,5 +71,10 @@ public class BookService {
     @Autowired
     public void setBookDao(BookDao bookDao) {
         this.bookDao = bookDao;
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }

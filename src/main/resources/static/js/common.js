@@ -1,20 +1,18 @@
-function buildElement(value, htmlTag) {
-    let tag = document.createElement(htmlTag);
-    if (isElement(value)) {
-        tag.appendChild(value);
+function buildTableData(value, mapper) {
+    let td = $('<td></td>');
+    if (mapper) {
+        td.append(mapper(value));
     } else {
-        tag.innerHTML = value;
+        td.append(value);
     }
-    return tag;
+    return td;
 }
 
-function isElement(obj) {
-    try {
-        return obj instanceof HTMLElement;
-    }
-    catch (e) {
-        return (typeof obj === "object") &&
-            (obj.nodeType === 1) && (typeof obj.style === "object") &&
-            (typeof obj.ownerDocument === "object");
-    }
+function getCurrentUserId(success, error) {
+    $.ajax({
+        type: 'GET',
+        url: 'api/user/currentUsername',
+        success: success,
+        error: error
+    });
 }
