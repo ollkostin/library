@@ -3,6 +3,8 @@ let limit = 5;
 let totalCount;
 let books = $('#books');
 let currentUsername;
+books.on('click', '.take-book', onTakeBookClick);
+books.on('click', '.return-book', onReturnBookClick);
 
 $(document).ready(function () {
     getCurrentUserId(function (username) {
@@ -44,7 +46,6 @@ function buildBookUserCell(username) {
         if (username === currentUsername) {
             content = $('<button class="btn btn-success return-book"></button>');
             content.append('Вернуть');
-            content.click(onTakeBookClick);
         } else {
             content = $('<p></p>');
             content.append('Взял ' + username);
@@ -52,7 +53,6 @@ function buildBookUserCell(username) {
     } else {
         content = $('<button class="btn btn-warning take-book"></button>');
         content.append('Взять');
-        content.click(onReturnBookClick);
     }
     return content;
 }
@@ -70,7 +70,8 @@ function onTakeBookClick() {
     let isn = isnCell.text();
     takeBook(isn, function (resp) {
         let buttonCell = currentRow.find("td:eq(3)");
-        buttonCell.replaceWith(buildBookUserCell(currentUsername));
+        buttonCell.empty();
+        buttonCell.append(buildBookUserCell(currentUsername));
     });
 }
 
@@ -80,7 +81,8 @@ function onReturnBookClick() {
     let isn = isnCell.text();
     returnBook(isn, function (resp) {
         let buttonCell = currentRow.find("td:eq(3)");
-        buttonCell.replaceWith(buildBookUserCell(null));
+        buttonCell.empty();
+        buttonCell.append(buildBookUserCell(null));
     });
 }
 
@@ -91,6 +93,6 @@ function onDeleteButtonClick() {
     if (confirm("Удалить книгу?")) {
         deletBook(isn, function (resp) {
             currentRow.remove();
-        })
+        });
     }
 }
