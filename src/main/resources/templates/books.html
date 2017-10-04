@@ -5,7 +5,19 @@
 <body>
 <nav th:replace="fragments/navbar :: navbar"></nav>
 <div class="container">
-    <h2>Книги</h2>
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <h2>Книги</h2>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <span>
+                <button class="btn btn-success"
+                        onclick="OnClickShowModalCreateBook()">
+                Добавить книгу
+            </button>
+            </span>
+        </div>
+    </div>
     <table class="table">
         <thead>
         <tr>
@@ -19,10 +31,70 @@
         <tbody id="books">
         </tbody>
     </table>
-    <button id="show-more" class="btn btn-primary"
+    <button id="show-more"
+            class="btn btn-primary"
             onclick="getMoreBooks()">
         Показать больше
     </button>
+</div>
+<div id="modal-window" class="modal fade">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modal-title" class="modal-title">
+                    Добавить книгу
+                </h5>
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="isn"
+                               class="control-label">
+                            ISN
+                        </label>
+                        <input id="isn"
+                               class="form-control"
+                               placeholder="ISN"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name"
+                               class="control-label">
+                            Название
+                        </label>
+                        <input id="name"
+                               class="form-control"
+                               placeholder="Название"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="author"
+                               class="control-label">
+                            Автор
+                        </label>
+                        <input id="author"
+                               class="form-control"
+                               placeholder="Автор"/>
+                    </div>
+                </form>
+            </div>
+            <div id="modal-footer" class="modal-footer">
+                <button class="btn btn-primary"
+                        onclick="onClickCreateBook()">
+                    Сохранить информацию
+                </button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="./js/common.js"></script>
 <script src="./js/api-book.js"></script>

@@ -3,8 +3,8 @@ let limit = 5;
 let totalCount;
 let books = $('#books');
 let currentUsername;
-books.on('click', '.take-book', onTakeBookClick);
-books.on('click', '.return-book', onReturnBookClick);
+books.on('click', '.take-book', onClickTakeBook);
+books.on('click', '.return-book', onClickReturnBook);
 
 $(document).ready(function () {
     getCurrentUserId(function (username) {
@@ -64,7 +64,7 @@ function buildBookDeleteCell() {
     return button;
 }
 
-function onTakeBookClick() {
+function onClickTakeBook() {
     let currentRow = $(this).closest("tr");
     let isnCell = currentRow.find("td:eq(0)");
     let isn = isnCell.text();
@@ -75,7 +75,7 @@ function onTakeBookClick() {
     });
 }
 
-function onReturnBookClick() {
+function onClickReturnBook() {
     let currentRow = $(this).closest("tr");
     let isnCell = currentRow.find("td:eq(0)");
     let isn = isnCell.text();
@@ -91,8 +91,39 @@ function onDeleteButtonClick() {
     let isnCell = currentRow.find("td:eq(0)");
     let isn = isnCell.text();
     if (confirm("Удалить книгу?")) {
-        deletBook(isn, function (resp) {
+        deleteBook(isn, function (resp) {
             currentRow.remove();
         });
     }
+}
+
+function OnClickShowModalCreateBook() {
+    $('#modal-window')
+        .modal('show');
+}
+
+function onClickCreateBook() {
+    let book = {
+        isn: $('#isn').val(),
+        name: $('#name').val(),
+        author: $('#author').val(),
+        username: null
+    };
+    createBook(book, function (resp) {
+        alert('Книга успешно сохранена');
+        $('#modal-window').modal('toggle');
+        clearModalValues();
+    }, function (resp) {
+        if (resp.responseJSON.message === 'isn')
+            alert('ISN не указан или указан неверно');
+        if (resp.responseJSON.message === 'book') {
+            alert('Книга с указанным ISN уже существует');
+        }
+    });
+}
+
+function clearModalValues() {
+    $('#isn').val('');
+    $('#name').val('');
+    $('#author').val('');
 }

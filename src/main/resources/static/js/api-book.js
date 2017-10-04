@@ -13,7 +13,7 @@ function getBooks(offset, limit, success, mapper, error) {
 function takeBook(isn, success, error) {
     $.ajax({
         type: 'POST',
-        url: 'api/book/'+ isn + '/take',
+        url: 'api/book/' + isn + '/take',
         success: success,
         error: error
     });
@@ -22,16 +22,27 @@ function takeBook(isn, success, error) {
 function returnBook(isn, success, error) {
     $.ajax({
         type: 'POST',
-        url: 'api/book/'+ isn + '/return',
+        url: 'api/book/' + isn + '/return',
         success: success,
         error: error
     });
 }
 
-function deletBook(isn, success, error) {
+function deleteBook(isn, success, error) {
     $.ajax({
         type: 'DELETE',
-        url: 'api/book/'+ isn,
+        url: 'api/book/' + isn,
+        success: success,
+        error: error
+    });
+}
+
+function createBook(book, success, error) {
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'api/book/',
+        data: JSON.stringify(book),
         success: success,
         error: error
     });
