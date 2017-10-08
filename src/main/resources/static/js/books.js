@@ -5,6 +5,7 @@ let books = $('#books');
 let currentUsername;
 books.on('click', '.take-book', onClickTakeBook);
 books.on('click', '.return-book', onClickReturnBook);
+$('#modal-window').on('hidden.bs.modal', clearModalValues);
 
 $(document).ready(function () {
     getCurrentUserId(function (username) {
@@ -28,7 +29,7 @@ function showBooks(response, mapper) {
 
 function bookTableRowMapper(el) {
     let tr = $('<tr></tr>');
-    tr.append(buildTableData(el['isn']));
+    tr.append(buildTableData(el['isn'],buildLinkCell));
     tr.append(buildTableData(el['name']));
     tr.append(buildTableData(el['author']));
     tr.append(buildTableData(el['username'], buildBookUserCell));
@@ -38,6 +39,12 @@ function bookTableRowMapper(el) {
 
 function getMoreBooks() {
     getBooks(offset, limit, showBooks, bookTableRowMapper, null);
+}
+
+function buildLinkCell(element) {
+    let a =  $('<a href="" class="btn edit-link" data-toggle="modal">' + element + '</a>');
+    a.click(onClickShowModalEditBook);
+    return a;
 }
 
 function buildBookUserCell(username) {
@@ -97,18 +104,14 @@ function onDeleteButtonClick() {
     }
 }
 
-function OnClickShowModalCreateBook() {
+function onClickShowModalCreateBook() {
+    $('#modal-action').click(onClickCreateBook);
     $('#modal-window')
         .modal('show');
 }
 
 function onClickCreateBook() {
-    let book = {
-        isn: $('#isn').val(),
-        name: $('#name').val(),
-        author: $('#author').val(),
-        username: null
-    };
+    let book = buildBookDto($('#isn').val(), $('#name').val(),$('#author').val());
     createBook(book, function (resp) {
         alert('Книга успешно сохранена');
         $('#modal-window').modal('toggle');
@@ -126,4 +129,42 @@ function clearModalValues() {
     $('#isn').val('');
     $('#name').val('');
     $('#author').val('');
+}
+
+function onClickShowModalEditBook() {
+    $('#modal-action').click(onClickEditBook);
+    let currentRow = $(this).closest("tr");
+    let isn = currentRow.find("td:eq(0)").text();
+    let name = currentRow.find("td:eq(1)").text();
+    let author = currentRow.find("td:eq(2)").text();
+    $('#isn').val(isn);
+    $('#name').val(name);
+    $('#author').val(author);
+    $('#modal-window')
+        .modal('show');
+}
+
+function buildBookDto(isn, name, author) {
+    return {
+        isn: isn,
+        name: name,
+        author: author
+    };
+}
+
+
+function onClickEditBook() {
+    let book =
+        buildBookDto($('#isn').val(), $('#name').val(),$('#author').val());
+    editBook(book, function (resp) {
+        alert('Книга успешно отредактирована');
+        $('#modal-window').modal('toggle');
+        clearModalValues();
+    }, function (resp) {
+        if (resp.responseJSON.message === 'isn')
+            alert('ISN не указан или указан неверно');
+        if (resp.responseJSON.message === 'book') {
+            alert('Книга с указанным ISN уже существует');
+        }
+    });
 }

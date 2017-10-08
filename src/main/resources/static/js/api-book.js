@@ -47,3 +47,14 @@ function createBook(book, success, error) {
         error: error
     });
 }
+
+function editBook(book, success, error) {
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'api/book/',
+        data: JSON.stringify(book),
+        success: success,
+        error: error
+    });
+}
