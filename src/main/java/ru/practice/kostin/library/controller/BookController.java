@@ -1,14 +1,15 @@
 package ru.practice.kostin.library.controller;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import ru.practice.kostin.library.exception.BookAlreadyExistsException;
+import ru.practice.kostin.library.model.UserDetailsImpl;
 import ru.practice.kostin.library.service.BookService;
 import ru.practice.kostin.library.service.dto.BookDto;
-import ru.practice.kostin.library.service.dto.PageDto;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -21,10 +22,42 @@ public class BookController {
     @GetMapping("/")
     public ResponseEntity getBooks(@RequestParam(value = "offset") int offset,
                                    @RequestParam(value = "limit") int limit) {
-        PageDto<BookDto> pageBookDto = bookService.getBooks(offset, limit);
-        return ok(pageBookDto);
+        return ok(bookService.getBooks(offset, limit));
     }
 
+    @PostMapping("/{isn}/take")
+    public ResponseEntity takeBook(@PathVariable("isn") String isn) throws NotFoundException {
+        UserDetailsImpl userDetails = (UserDetailsImpl)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        bookService.takeBook(isn, userDetails.getId());
+        return ok().build();
+    }
+
+    @PostMapping("/{isn}/return")
+    public ResponseEntity returnBook(@PathVariable("isn") String isn) throws NotFoundException {
+        UserDetailsImpl userDetails = (UserDetailsImpl)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        bookService.returnBook(isn, userDetails.getId());
+        return ok().build();
+    }
+
+    @DeleteMapping("/{isn}")
+    public ResponseEntity deleteBook(@PathVariable("isn") String isn) {
+        bookService.deleteBook(isn);
+        return ok().build();
+    }
+
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity createBook(@RequestBody BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
+        bookService.createBook(bookDto);
+        return ok().build();
+    }
+
+    @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity editBook(@RequestBody BookDto bookDto) {
+        bookService.editBook(bookDto);
+        return ok().build();
+    }
 
     @Autowired
     public void setBookService(BookService bookService) {

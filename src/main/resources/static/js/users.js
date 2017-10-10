@@ -1,16 +1,18 @@
 let users = $('#users');
 
-$(document).ready(() => {
+$(document).ready(function () {
     getUsers(showUsers, userTableRowMapper, null);
 });
 
 function showUsers(response, mapper) {
-    response.forEach(el => users.append(mapper(el)));
+    response.forEach(function (el) {
+        users.append(mapper(el));
+    });
 }
 
 function userTableRowMapper(el) {
-    let tr = document.createElement('tr');
-    tr.append(buildElement(el['id'], 'td'));
-    tr.append(buildElement(el['username'], 'td'));
+    let tr = $('<tr></tr>');
+    tr.append(buildTableData(el['id']));
+    tr.append(buildTableData(el['username']));
     return tr;
 }
