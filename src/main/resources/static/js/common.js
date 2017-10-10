@@ -16,3 +16,7 @@ function getCurrentUserId(success, error) {
         error: error
     });
 }
+
+function showErrorAlert(resp) {
+    alert(resp);
+}

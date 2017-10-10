@@ -29,7 +29,7 @@ function showBooks(response, mapper) {
 
 function bookTableRowMapper(el) {
     let tr = $('<tr></tr>');
-    tr.append(buildTableData(el['isn'],buildLinkCell));
+    tr.append(buildTableData(el['isn'], buildLinkCell));
     tr.append(buildTableData(el['name']));
     tr.append(buildTableData(el['author']));
     tr.append(buildTableData(el['username'], buildBookUserCell));
@@ -42,7 +42,7 @@ function getMoreBooks() {
 }
 
 function buildLinkCell(element) {
-    let a =  $('<a href="" class="btn edit-link" data-toggle="modal">' + element + '</a>');
+    let a = $('<a href="" data-toggle="modal">' + element + '</a>');
     a.click(onClickShowModalEditBook);
     return a;
 }
@@ -87,10 +87,11 @@ function onClickReturnBook() {
     let isnCell = currentRow.find("td:eq(0)");
     let isn = isnCell.text();
     returnBook(isn, function (resp) {
-        let buttonCell = currentRow.find("td:eq(3)");
-        buttonCell.empty();
-        buttonCell.append(buildBookUserCell(null));
-    });
+            let buttonCell = currentRow.find("td:eq(3)");
+            buttonCell.empty();
+            buttonCell.append(buildBookUserCell(null));
+        },
+        showErrorAlert);
 }
 
 function onDeleteButtonClick() {
@@ -100,29 +101,23 @@ function onDeleteButtonClick() {
     if (confirm("Удалить книгу?")) {
         deleteBook(isn, function (resp) {
             currentRow.remove();
-        });
+        }, showErrorAlert);
     }
 }
 
 function onClickShowModalCreateBook() {
-    $('#modal-action').click(onClickCreateBook);
+    $('#modal-action').on('click', onClickCreateBook);
     $('#modal-window')
         .modal('show');
 }
 
 function onClickCreateBook() {
-    let book = buildBookDto($('#isn').val(), $('#name').val(),$('#author').val());
+    let book = buildBookDto($('#isn').val(), $('#name').val(), $('#author').val());
     createBook(book, function (resp) {
         alert('Книга успешно сохранена');
         $('#modal-window').modal('toggle');
         clearModalValues();
-    }, function (resp) {
-        if (resp.responseJSON.message === 'isn')
-            alert('ISN не указан или указан неверно');
-        if (resp.responseJSON.message === 'book') {
-            alert('Книга с указанным ISN уже существует');
-        }
-    });
+    }, bookError);
 }
 
 function clearModalValues() {
@@ -132,7 +127,7 @@ function clearModalValues() {
 }
 
 function onClickShowModalEditBook() {
-    $('#modal-action').click(onClickEditBook);
+    $('#modal-action').on('click', onClickEditBook);
     let currentRow = $(this).closest("tr");
     let isn = currentRow.find("td:eq(0)").text();
     let name = currentRow.find("td:eq(1)").text();
@@ -152,19 +147,21 @@ function buildBookDto(isn, name, author) {
     };
 }
 
-
 function onClickEditBook() {
     let book =
-        buildBookDto($('#isn').val(), $('#name').val(),$('#author').val());
+        buildBookDto($('#isn').val(), $('#name').val(), $('#author').val());
     editBook(book, function (resp) {
         alert('Книга успешно отредактирована');
-        $('#modal-window').modal('toggle');
-        clearModalValues();
-    }, function (resp) {
-        if (resp.responseJSON.message === 'isn')
-            alert('ISN не указан или указан неверно');
-        if (resp.responseJSON.message === 'book') {
-            alert('Книга с указанным ISN уже существует');
-        }
-    });
+        // $('#modal-window').modal('toggle');
+        // clearModalValues();
+        location.reload();
+    }, bookError);
+}
+
+function bookError(resp) {
+    if (resp.responseJSON.message === 'isn')
+        alert('ISN не указан или указан неверно');
+    if (resp.responseJSON.message === 'book') {
+        alert('Книга с указанным ISN уже существует');
+    }
 }

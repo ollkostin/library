@@ -31,7 +31,6 @@ public class BookService {
         return pageDto;
     }
 
-    //TODO:переписать взятие и возврат книги, не надо обновлять все поля
     public void takeBook(String isn, Integer userId) throws NotFoundException {
         Book book = bookDao.get(isn);
         User user = userDao.getById(userId);
@@ -88,6 +87,10 @@ public class BookService {
         book.setIsn(bookDto.getIsn());
         book.setName(bookDto.getName());
         book.setAuthor(bookDto.getAuthor());
+        if (Optional.ofNullable(bookDto.getUsername()).isPresent()) {
+            User user = userDao.getByUsername(bookDto.getUsername());
+            book.setUser(user);
+        }
         return book;
     }
 

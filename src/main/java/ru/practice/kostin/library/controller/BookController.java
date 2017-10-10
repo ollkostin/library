@@ -10,7 +10,6 @@ import ru.practice.kostin.library.exception.BookAlreadyExistsException;
 import ru.practice.kostin.library.model.UserDetailsImpl;
 import ru.practice.kostin.library.service.BookService;
 import ru.practice.kostin.library.service.dto.BookDto;
-import ru.practice.kostin.library.service.dto.PageDto;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -23,8 +22,7 @@ public class BookController {
     @GetMapping("/")
     public ResponseEntity getBooks(@RequestParam(value = "offset") int offset,
                                    @RequestParam(value = "limit") int limit) {
-        PageDto<BookDto> pageBookDto = bookService.getBooks(offset, limit);
-        return ok(pageBookDto);
+        return ok(bookService.getBooks(offset, limit));
     }
 
     @PostMapping("/{isn}/take")
@@ -52,6 +50,12 @@ public class BookController {
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createBook(@RequestBody BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
         bookService.createBook(bookDto);
+        return ok().build();
+    }
+
+    @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity editBook(@RequestBody BookDto bookDto) {
+        bookService.editBook(bookDto);
         return ok().build();
     }
 
