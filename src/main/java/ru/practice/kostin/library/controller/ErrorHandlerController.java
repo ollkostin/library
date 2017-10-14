@@ -16,18 +16,18 @@ public class ErrorHandlerController {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto notFound(NotFoundException e) {
-        return new ErrorDto(e.getMessage());
+        return new ErrorDto(404, e.getMessage());
     }
 
     @ExceptionHandler(BookAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDto bookAlreadyExists(BookAlreadyExistsException e) {
-        return new ErrorDto(e.getMessage());
+        return new ErrorDto(403, e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ErrorDto illegalArgument(IllegalArgumentException e) {
-        return new ErrorDto(e.getMessage());
+        return new ErrorDto(406, e.getMessage());
     }
 }

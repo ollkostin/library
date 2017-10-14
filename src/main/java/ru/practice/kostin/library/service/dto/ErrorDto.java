@@ -5,7 +5,10 @@ public class ErrorDto {
 
     private String message;
 
-    public ErrorDto(String message) {
+    private int code;
+
+    public ErrorDto(int code,String message) {
+        this.code = code;
         this.message = message;
     }
 
