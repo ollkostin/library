@@ -6,11 +6,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
 import ru.practice.kostin.library.model.UserDetailsImpl;
 import ru.practice.kostin.library.service.BookService;
 import ru.practice.kostin.library.service.dto.BookDto;
 
+import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -49,12 +52,15 @@ public class BookController {
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createBook(@RequestBody BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
-        bookService.createBook(bookDto);
-        return ok().build();
+        String isn = bookService.createBook(bookDto);
+        UriComponents uri = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(isn);
+        return created(uri.toUri()).build();
     }
 
     @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity editBook(@RequestBody BookDto bookDto) {
+    public ResponseEntity editBook(@RequestBody BookDto bookDto) throws IllegalArgumentException {
         bookService.editBook(bookDto);
         return ok().build();
     }

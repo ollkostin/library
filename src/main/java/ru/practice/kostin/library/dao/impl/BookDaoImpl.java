@@ -26,6 +26,10 @@ public class BookDaoImpl implements BookDao {
     private String UPDATE = "UPDATE book SET name = ?, author = ?, user_id = ? WHERE isn = ?";
     private String DELETE = "DELETE FROM book WHERE isn = ?";
     private String COUNT = "SELECT COUNT(*) FROM book b";
+    private String BOOKS_BY_USER_ID = "SELECT b.isn, b.name, b.author, u.id, u.username " +
+            "FROM book b " +
+            "LEFT JOIN user u ON u.id = b.user_id " +
+            "WHERE u.id = ?";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -61,8 +65,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void insert(Book book) {
+    public String insert(Book book) {
         jdbcTemplate.update(INSERT, book.getIsn(), book.getName(), book.getAuthor());
+        return book.getIsn();
     }
 
     @Override

@@ -17,3 +17,25 @@ function deleteUser(id, success, error) {
         error: error
     });
 }
+
+function createUser(user, success, error) {
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'api/user/',
+        data: JSON.stringify(user),
+        success: success,
+        error: error
+    });
+}
+
+function editUser(user, success, error) {
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'api/user/',
+        data: JSON.stringify(user),
+        success: success,
+        error: error
+    });
+}
