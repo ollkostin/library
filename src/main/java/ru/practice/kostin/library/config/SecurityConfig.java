@@ -21,7 +21,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .permitAll();
+                .permitAll()
+                .and()
+                .logout().logoutUrl("/logout");
     }
 
     @Override
