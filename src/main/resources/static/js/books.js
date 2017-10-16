@@ -1,6 +1,7 @@
-let offset = 0;
-let limit = 5;
 let totalCount;
+let ascAuthor = true;
+let ascName = false;
+let params;
 let currentUsername;
 $('#books').on('click', '.take-book', onClickTakeBook);
 $('#books').on('click', '.return-book', onClickReturnBook);
@@ -10,17 +11,21 @@ $(document).ready(function () {
     getCurrentUserId(function (username) {
         currentUsername = username;
     });
-    getMoreBooks();
+    params = {
+        offset : 0,
+        limit: 5
+    };
+    getMoreBooks(params);
 });
 
 function showBooks(response, mapper) {
-    offset = response.offset;
-    limit = response.limit;
+    params.offset = response.offset;
+    params.limit = response.limit;
     totalCount = response.totalCount;
-    if (totalCount === (offset + 1) * limit)
+    if (totalCount === (params.offset + 1) * params.limit)
         $('#show-more').hide();
     else
-        offset++;
+        params.offset++;
     response.data.forEach(function (el) {
         $('#books').append(mapper(el));
     });
@@ -36,8 +41,8 @@ function bookTableRowMapper(el) {
     return tr;
 }
 
-function getMoreBooks() {
-    getBooks(offset, limit, showBooks, bookTableRowMapper, null);
+function getMoreBooks(params) {
+    getBooks(params, showBooks, bookTableRowMapper);
 }
 
 function buildBookLinkCell(isn) {
@@ -148,8 +153,6 @@ function onClickEditBook() {
         buildBookDto($('#isn').val(), $('#name').val(), $('#author').val());
     editBook(book, function (resp) {
         alert('Книга успешно отредактирована');
-        // $('#modal-window').modal('toggle');
-        // clearBookModalValues();
         location.reload();
     }, bookError);
 }
@@ -160,4 +163,34 @@ function bookError(resp) {
     if (resp.responseJSON.message === 'book') {
         alert('Книга с указанным ISN уже существует');
     }
+}
+
+function onClickSortByAuthor() {
+    params = {
+        offset : 0,
+        limit : 5,
+        order: 'author',
+        desc: ascAuthor
+    };
+    $('#td-name').removeClass('sort-desc sort-asc');
+    $('#td-author').removeClass('sort-desc sort-asc')
+        .addClass(ascAuthor ? 'sort-desc' : 'sort-asc');
+    $('#books').empty();
+    getMoreBooks(params, showBooks);
+    ascAuthor = !ascAuthor;
+}
+
+function onClickSortByName() {
+    params = {
+        offset : 0,
+        limit : 5,
+        order: 'name',
+        desc: ascName
+    };
+    $('#td-author').removeClass('sort-desc sort-asc');
+    $('#td-name').removeClass('sort-desc sort-asc')
+        .addClass(ascName ?'sort-desc' : 'sort-asc' );
+    $('#books').empty();
+    getMoreBooks(params, showBooks);
+    ascName = !ascName;
 }

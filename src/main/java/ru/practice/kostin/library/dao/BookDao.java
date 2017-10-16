@@ -1,6 +1,7 @@
 package ru.practice.kostin.library.dao;
 
 import ru.practice.kostin.library.model.Book;
+import ru.practice.kostin.library.service.type.OrderType;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface BookDao {
 
     int count();
 
-    List<Book> fetch(int offset,int limit);
+    List<Book> fetch(int offset, int limit, OrderType sort, boolean desc);
 
     Book get(String isn);
 

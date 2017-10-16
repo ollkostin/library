@@ -24,8 +24,10 @@ public class BookController {
 
     @GetMapping("/")
     public ResponseEntity getBooks(@RequestParam(value = "offset") int offset,
-                                   @RequestParam(value = "limit") int limit) {
-        return ok(bookService.getBooks(offset, limit));
+                                   @RequestParam(value = "limit") int limit,
+                                   @RequestParam(value = "order", defaultValue = "author") String order,
+                                   @RequestParam(value = "desc", defaultValue = "false") boolean desc) {
+        return ok(bookService.getBooks(offset, limit, order, desc));
     }
 
     @PostMapping("/{isn}/take")
