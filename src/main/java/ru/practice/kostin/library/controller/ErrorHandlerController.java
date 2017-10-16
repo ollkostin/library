@@ -22,8 +22,14 @@ public class ErrorHandlerController {
 
     @ExceptionHandler({BookAlreadyExistsException.class, UserAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorDto bookAlreadyExists(Exception e) {
+    public ErrorDto alreadyExists(Exception e) {
         return new ErrorDto("409", e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDto illegalArgument(IllegalArgumentException e) {
+        return new ErrorDto("400", e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

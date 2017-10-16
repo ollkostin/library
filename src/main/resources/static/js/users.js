@@ -13,7 +13,7 @@ function showUsers(response, mapper) {
 
 function userTableRowMapper(el) {
     let tr = $('<tr></tr>');
-    tr.append(buildTableData(el['id']));
+    tr.append(buildTableData(el['id'], buildUserLinkCell));
     tr.append(buildTableData(el['username']));
     tr.append(buildTableData(buildUserDeleteCell));
     return tr;
@@ -39,6 +39,7 @@ function onDeleteUserButtonClick() {
 }
 
 function onClickShowModalCreateUser() {
+    $('#user-id-div').hide();
     $('#modal-action').on('click', onClickCreateUser);
     $('#modal-window').modal('show');
 }
@@ -52,17 +53,24 @@ function onClickCreateUser() {
 }
 
 function userError(resp) {
-    if (resp.responseJSON.message === 'username')
-        alert('Имя пользователя не указано');
-    if (resp.responseJSON.message === 'password') {
-        alert('Пароль не указан');
+    if (resp.responseJSON.code === '400') {
+        if (resp.responseJSON.message === 'username')
+            alert('Имя пользователя не указано');
+        if (resp.responseJSON.message === 'password')
+            alert('Пароль не указан');
     }
-    if (resp.responseJSON.message === 'exists') {
+    if (resp.responseJSON.code === '409' && resp.responseJSON.message === 'exists') {
         alert('Пользователь с данным именем существует');
     }
+    if (resp.responseJSON.code === '404' && resp.responseJSON.message === 'user') {
+        alert('Пользователь не был найден');
+    }
+    if (resp.responseJSON.code === '500')
+        alert(resp.responseJSON.message);
 }
 
 function clearUserModalValues() {
+    $('#user-id').val('');
     $('#username').val('');
     $('#password').val('');
 }
@@ -82,16 +90,22 @@ function buildUserLinkCell(username) {
 }
 
 function onClickShowModalEditUser() {
-    $('#modal-action').on('click', onClickEditUser);
     let currentRow = $(this).closest("tr");
+    let id = currentRow.find("td:eq(0)").text();
     let username = currentRow.find("td:eq(1)").text();
+    $('#user-id').val(id);
     $('#username').val(username);
     $('#password').val('');
+    $('#user-id-div').show();
+    $('#modal-action').on('click', onClickEditUser);
     $('#modal-window').modal('show');
 }
 
-
-
 function onClickEditUser() {
-
+    let userDto = buildUserDto($('#username').val(), $('#password').val(), $('#user-id').val());
+    editUser(userDto, function (resp) {
+        alert('Пользователь успешно отредактирован');
+        $('#modal-window').modal('toggle');
+        location.reload();
+    }, userError);
 }

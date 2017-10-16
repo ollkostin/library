@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
-import ru.practice.kostin.library.model.UserDetailsImpl;
+import ru.practice.kostin.library.security.UserDetailsImpl;
 import ru.practice.kostin.library.service.BookService;
 import ru.practice.kostin.library.service.dto.BookDto;
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import ru.practice.kostin.library.exception.UserAlreadyExistsException;
-import ru.practice.kostin.library.model.UserDetailsImpl;
+import ru.practice.kostin.library.security.UserDetailsImpl;
 import ru.practice.kostin.library.service.UserService;
 import ru.practice.kostin.library.service.dto.UserDto;
 
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity editUser(@RequestBody UserDto userDto) throws IllegalArgumentException {
+    public ResponseEntity editUser(@RequestBody UserDto userDto) throws IllegalArgumentException, NotFoundException {
         userService.editUser(userDto);
         return ok().build();
     }
