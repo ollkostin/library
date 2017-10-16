@@ -34,7 +34,7 @@ function onDeleteUserButtonClick() {
     if (confirm("Удалить пользователя?")) {
         deleteUser(id, function (resp) {
             currentRow.remove();
-        }, showErrorAlert);
+        }, userError);
     }
 }
 
@@ -56,17 +56,15 @@ function userError(resp) {
     if (resp.responseJSON.code === '400') {
         if (resp.responseJSON.message === 'username')
             alert('Имя пользователя не указано');
-        if (resp.responseJSON.message === 'password')
+        else if (resp.responseJSON.message === 'password')
             alert('Пароль не указан');
-    }
-    if (resp.responseJSON.code === '409' && resp.responseJSON.message === 'exists') {
+    } else if (resp.responseJSON.code === '409' && resp.responseJSON.message === 'exists') {
         alert('Пользователь с данным именем существует');
-    }
-    if (resp.responseJSON.code === '404' && resp.responseJSON.message === 'user') {
+    } else if (resp.responseJSON.code === '404' && resp.responseJSON.message === 'user') {
         alert('Пользователь не был найден');
-    }
-    if (resp.responseJSON.code === '500')
+    } else if (resp.responseJSON.code === '500') {
         alert(resp.responseJSON.message);
+    }
 }
 
 function clearUserModalValues() {

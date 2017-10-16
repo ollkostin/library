@@ -34,7 +34,7 @@ public class BookService {
     public void takeBook(String isn, Integer userId) throws NotFoundException {
         Book book = bookDao.get(isn);
         User user = userDao.getById(userId);
-        if (!Optional.ofNullable(user).isPresent()) {
+        if (user == null) {
             throw new NotFoundException("user");
         }
         book.setUser(user);
@@ -44,7 +44,7 @@ public class BookService {
     public void returnBook(String isn, Integer userId) throws NotFoundException {
         Book book = bookDao.get(isn);
         User user = userDao.getById(userId);
-        if (!Optional.ofNullable(user).isPresent()) {
+        if (user == null) {
             throw new NotFoundException("user");
         }
         book.setUser(null);
@@ -54,7 +54,7 @@ public class BookService {
     public String createBook(BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
         BookDtoValidator.validateBookDto(bookDto);
         Book book = bookDao.get(bookDto.getIsn());
-        if (Optional.ofNullable(book).isPresent()) {
+        if (book != null) {
             throw new BookAlreadyExistsException("book");
         }
         book = buildBookEntityFromDto(bookDto);
@@ -75,9 +75,9 @@ public class BookService {
         bookDto.setIsn(book.getIsn());
         bookDto.setName(book.getName());
         bookDto.setAuthor(book.getAuthor());
-        Optional<User> user = Optional.ofNullable(book.getUser());
-        if (user.isPresent()) {
-            bookDto.setUsername(user.get().getUsername());
+        User user = book.getUser();
+        if (user != null) {
+            bookDto.setUsername(user.getUsername());
         }
         return bookDto;
     }
@@ -87,7 +87,7 @@ public class BookService {
         book.setIsn(bookDto.getIsn());
         book.setName(bookDto.getName());
         book.setAuthor(bookDto.getAuthor());
-        if (Optional.ofNullable(bookDto.getUsername()).isPresent()) {
+        if (bookDto.getUsername() != null && !bookDto.getUsername().isEmpty()) {
             User user = userDao.getByUsername(bookDto.getUsername());
             book.setUser(user);
         }

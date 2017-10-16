@@ -12,7 +12,7 @@ $(document).ready(function () {
         currentUsername = username;
     });
     params = {
-        offset : 0,
+        offset: 0,
         limit: 5
     };
     getMoreBooks(params);
@@ -83,7 +83,7 @@ function onClickTakeBook() {
         let buttonCell = currentRow.find("td:eq(3)");
         buttonCell.empty();
         buttonCell.append(buildBookUserCell(currentUsername));
-    });
+    }, bookError);
 }
 
 function onClickReturnBook() {
@@ -91,10 +91,10 @@ function onClickReturnBook() {
     let isnCell = currentRow.find("td:eq(0)");
     let isn = isnCell.text();
     returnBook(isn, function (resp) {
-            let buttonCell = currentRow.find("td:eq(3)");
-            buttonCell.empty();
-            buttonCell.append(buildBookUserCell(null));
-        }, showErrorAlert);
+        let buttonCell = currentRow.find("td:eq(3)");
+        buttonCell.empty();
+        buttonCell.append(buildBookUserCell(null));
+    }, bookError);
 }
 
 function onDeleteBookButtonClick() {
@@ -104,7 +104,7 @@ function onDeleteBookButtonClick() {
     if (confirm("Удалить книгу?")) {
         deleteBook(isn, function (resp) {
             currentRow.remove();
-        }, showErrorAlert);
+        }, bookError);
     }
 }
 
@@ -158,17 +158,22 @@ function onClickEditBook() {
 }
 
 function bookError(resp) {
-    if (resp.responseJSON.message === 'isn')
-        alert('ISN не указан или указан неверно');
-    if (resp.responseJSON.message === 'book') {
-        alert('Книга с указанным ISN уже существует');
+    if (resp.responseJSON.code === "400" && resp.responseJSON.message === 'user') {
+        alert('Пользователь не был найден');
+    } else if (resp.responseJSON.code === "409") {
+        if (resp.responseJSON.message === 'isn')
+            alert('ISN не указан или указан неверно');
+        else if (resp.responseJSON.message === 'book')
+            alert('Книга с указанным ISN уже существует');
+    } else if (resp.responseJSON.code === '500') {
+        alert(resp.responseJSON.message);
     }
 }
 
 function onClickSortByAuthor() {
     params = {
-        offset : 0,
-        limit : 5,
+        offset: 0,
+        limit: 5,
         order: 'author',
         desc: ascAuthor
     };
@@ -182,14 +187,14 @@ function onClickSortByAuthor() {
 
 function onClickSortByName() {
     params = {
-        offset : 0,
-        limit : 5,
+        offset: 0,
+        limit: 5,
         order: 'name',
         desc: ascName
     };
     $('#td-author').removeClass('sort-desc sort-asc');
     $('#td-name').removeClass('sort-desc sort-asc')
-        .addClass(ascName ?'sort-desc' : 'sort-asc' );
+        .addClass(ascName ? 'sort-desc' : 'sort-asc');
     $('#books').empty();
     getMoreBooks(params, showBooks);
     ascName = !ascName;
