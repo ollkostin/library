@@ -46,17 +46,17 @@ public class UserService {
 
     public void editUser(UserDto userDto) throws IllegalArgumentException, NotFoundException {
         UserDtoValidator.validateUserDto(userDto);
-        User user = getUserByUsername(userDto.getUsername());
-        if (user != null) {
-            throw new UserAlreadyExistsException("exists");
-        }
-        user = userDao.getById(userDto.getId());
+        User user = userDao.getById(userDto.getId());
         if (user == null) {
             throw new NotFoundException("user");
         }
+        User userByUsername = getUserByUsername(userDto.getUsername());
+        if (userByUsername != null && !user.getId().equals(userByUsername.getId())) {
+            throw new UserAlreadyExistsException("exists");
+        }
         user.setUsername(userDto.getUsername());
         user.setPasswordHash(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        userDao.update(user);
+        userDao.update(userByUsername);
     }
 
 
