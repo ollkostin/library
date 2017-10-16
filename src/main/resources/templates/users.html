@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org"  lang="ru">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head th:replace="fragments/head :: head">
 </head>
 <body>
 <nav th:replace="fragments/navbar :: navbar"></nav>
 <div class="container">
     <h2>Пользователи</h2>
+    <span>
+        <button class="btn btn-success"
+                onclick="onClickShowModalCreateUser()">
+            Добавить пользователя
+        </button>
+    </span>
     <table class="table">
         <thead>
         <tr>
@@ -16,6 +22,54 @@
         <tbody id="users">
         </tbody>
     </table>
+</div>
+<div id="modal-window" class="modal fade">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div id="modal-body" class="modal-body">
+                <form>
+                    <div class="form-group" id="user-id-div">
+                        <label for="user-id"
+                               class="control-label">
+                           ID
+                        </label>
+                        <input id="user-id"
+                               class="form-control"
+                               disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="username"
+                               class="control-label">
+                            Новое имя пользователя
+                        </label>
+                        <input id="username"
+                               class="form-control"
+                               placeholder="Имя пользователя"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="password"
+                               class="control-label">
+                            Новый пароль
+                        </label>
+                        <input id="password"
+                               class="form-control"
+                               placeholder="Пароль"/>
+                    </div>
+                </form>
+            </div>
+            <div id="modal-footer" class="modal-footer">
+                <button id="modal-action"
+                        class="btn btn-primary">
+                    Сохранить информацию
+                </button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="./js/common.js"></script>
 <script src="./js/api-user.js"></script>

@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.practice.kostin.library.dao.UserDao;
 import ru.practice.kostin.library.model.User;
 
-import java.sql.Types;
+import java.sql.*;
 import java.util.List;
 
 @Repository
@@ -51,9 +53,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void insert(User user) {
-        jdbcTemplate.update(INSERT, new Object[]{user.getUsername(), user.getPasswordHash()},
-                new Object[]{Types.VARCHAR, Types.VARCHAR});
+    public int insert(User user) {
+        GeneratedKeyHolder holder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+                statement.setString(1, user.getUsername());
+                statement.setString(2, user.getPasswordHash());
+                return statement;
+            }
+        }, holder);
+        return holder.getKey().intValue();
     }
 
     @Override

@@ -4,7 +4,7 @@ import ru.practice.kostin.library.service.dto.BookDto;
 
 public class BookDtoValidator {
 
-    public static void validateBookDto(BookDto bookDto) {
+    public static void validateBookDto(BookDto bookDto) throws IllegalArgumentException {
         if (validateIsn(bookDto.getIsn())) {
             throw new IllegalArgumentException("isn");
         }

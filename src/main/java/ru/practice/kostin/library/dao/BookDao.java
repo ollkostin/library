@@ -15,7 +15,7 @@ public interface BookDao {
 
     Book get(String isn);
 
-    void insert(Book book);
+    String insert(Book book);
 
     void update(Book book);
 

@@ -51,21 +51,21 @@ public class BookService {
         bookDao.update(book);
     }
 
-    public void createBook(BookDto bookDto) throws BookAlreadyExistsException {
+    public String createBook(BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
         BookDtoValidator.validateBookDto(bookDto);
         Book book = bookDao.get(bookDto.getIsn());
         if (Optional.ofNullable(book).isPresent()) {
             throw new BookAlreadyExistsException("book");
         }
         book = buildBookEntityFromDto(bookDto);
-        bookDao.insert(book);
+        return bookDao.insert(book);
     }
 
     public void deleteBook(String isn) {
         bookDao.delete(isn);
     }
 
-    public void editBook(BookDto bookDto) {
+    public void editBook(BookDto bookDto) throws IllegalArgumentException {
         BookDtoValidator.validateBookDto(bookDto);
         bookDao.update(buildBookEntityFromDto(bookDto));
     }

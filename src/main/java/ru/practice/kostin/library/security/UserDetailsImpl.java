@@ -1,4 +1,4 @@
-package ru.practice.kostin.library.model;
+package ru.practice.kostin.library.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

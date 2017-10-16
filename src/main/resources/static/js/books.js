@@ -2,11 +2,10 @@ let totalCount;
 let ascAuthor = true;
 let ascName = false;
 let params;
-let books = $('#books');
 let currentUsername;
-books.on('click', '.take-book', onClickTakeBook);
-books.on('click', '.return-book', onClickReturnBook);
-$('#modal-window').on('hidden.bs.modal', clearModalValues);
+$('#books').on('click', '.take-book', onClickTakeBook);
+$('#books').on('click', '.return-book', onClickReturnBook);
+$('#modal-window').on('hidden.bs.modal', clearBookModalValues);
 
 $(document).ready(function () {
     getCurrentUserId(function (username) {
@@ -28,17 +27,17 @@ function showBooks(response, mapper) {
     else
         params.offset++;
     response.data.forEach(function (el) {
-        books.append(mapper(el));
+        $('#books').append(mapper(el));
     });
 }
 
 function bookTableRowMapper(el) {
     let tr = $('<tr></tr>');
-    tr.append(buildTableData(el['isn'], buildLinkCell));
+    tr.append(buildTableData(el['isn'], buildBookLinkCell));
     tr.append(buildTableData(el['name']));
     tr.append(buildTableData(el['author']));
     tr.append(buildTableData(el['username'], buildBookUserCell));
-    tr.append(buildTableData(null, buildBookDeleteCell));
+    tr.append(buildTableData(buildBookDeleteCell));
     return tr;
 }
 
@@ -46,8 +45,8 @@ function getMoreBooks(params) {
     getBooks(params, showBooks, bookTableRowMapper);
 }
 
-function buildLinkCell(element) {
-    let a = $('<a href="" data-toggle="modal">' + element + '</a>');
+function buildBookLinkCell(isn) {
+    let a = $('<a href="" data-toggle="modal">' + isn + '</a>');
     a.click(onClickShowModalEditBook);
     return a;
 }
@@ -72,7 +71,7 @@ function buildBookUserCell(username) {
 function buildBookDeleteCell() {
     let button = $('<button class="btn btn-danger delete-book"></button>');
     button.append('Удалить');
-    button.click(onDeleteButtonClick);
+    button.click(onDeleteBookButtonClick);
     return button;
 }
 
@@ -95,11 +94,10 @@ function onClickReturnBook() {
             let buttonCell = currentRow.find("td:eq(3)");
             buttonCell.empty();
             buttonCell.append(buildBookUserCell(null));
-        },
-        showErrorAlert);
+        }, showErrorAlert);
 }
 
-function onDeleteButtonClick() {
+function onDeleteBookButtonClick() {
     let currentRow = $(this).closest("tr");
     let isnCell = currentRow.find("td:eq(0)");
     let isn = isnCell.text();
@@ -112,8 +110,7 @@ function onDeleteButtonClick() {
 
 function onClickShowModalCreateBook() {
     $('#modal-action').on('click', onClickCreateBook);
-    $('#modal-window')
-        .modal('show');
+    $('#modal-window').modal('show');
 }
 
 function onClickCreateBook() {
@@ -121,11 +118,11 @@ function onClickCreateBook() {
     createBook(book, function (resp) {
         alert('Книга успешно сохранена');
         $('#modal-window').modal('toggle');
-        clearModalValues();
+        clearBookModalValues();
     }, bookError);
 }
 
-function clearModalValues() {
+function clearBookModalValues() {
     $('#isn').val('');
     $('#name').val('');
     $('#author').val('');
@@ -140,8 +137,7 @@ function onClickShowModalEditBook() {
     $('#isn').val(isn);
     $('#name').val(name);
     $('#author').val(author);
-    $('#modal-window')
-        .modal('show');
+    $('#modal-window').modal('show');
 }
 
 function buildBookDto(isn, name, author) {

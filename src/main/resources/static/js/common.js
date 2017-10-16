@@ -18,5 +18,5 @@ function getCurrentUserId(success, error) {
 }
 
 function showErrorAlert(resp) {
-    alert(resp);
+    alert(resp.responseJSON.message);
 }

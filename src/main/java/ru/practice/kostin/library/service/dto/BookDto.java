@@ -1,8 +1,8 @@
 package ru.practice.kostin.library.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookDto {
     private String isn;
     private String name;
