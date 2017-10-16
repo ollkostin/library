@@ -1,8 +1,8 @@
-function getBooks(offset, limit, success, mapper, error) {
+function getBooks(params, success, mapper, error) {
     $.ajax({
         type: 'GET',
         url: 'api/book/',
-        data: {offset, limit},
+        data: params,
         success: function (resp) {
             success(resp, mapper);
         },

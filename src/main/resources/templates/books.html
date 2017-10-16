@@ -3,6 +3,7 @@
 <head th:replace="fragments/head :: head">
 </head>
 <body>
+<link rel="stylesheet" href="./css/main.css"/>
 <nav th:replace="fragments/navbar :: navbar"></nav>
 <div class="container">
     <h2>Книги</h2>
@@ -16,8 +17,8 @@
         <thead>
         <tr>
             <th>ISN</th>
-            <td>Название</td>
-            <td>Автор</td>
+            <td id="td-name" onclick="onClickSortByName()">Название</td>
+            <td id="td-author" class="sort-asc" onclick="onClickSortByAuthor()">Автор</td>
             <td>Кем взята</td>
             <td>Удалить</td>
         </tr>
@@ -27,7 +28,7 @@
     </table>
     <button id="show-more"
             class="btn btn-primary"
-            onclick="getMoreBooks()">
+            onclick="getMoreBooks(params)">
         Показать больше
     </button>
 </div>
