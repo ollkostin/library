@@ -10,6 +10,7 @@ import ru.practice.kostin.library.model.Book;
 import ru.practice.kostin.library.model.User;
 import ru.practice.kostin.library.service.dto.BookDto;
 import ru.practice.kostin.library.service.dto.PageDto;
+import ru.practice.kostin.library.service.type.OrderType;
 import ru.practice.kostin.library.util.BookDtoValidator;
 
 import java.util.List;
@@ -21,14 +22,13 @@ public class BookService {
     private BookDao bookDao;
     private UserDao userDao;
 
-    public PageDto<BookDto> getBooks(int offset, int limit) {
+    public PageDto<BookDto> getBooks(int offset, int limit, String sort, boolean desc) {
         int totalCount = bookDao.count();
-        List<Book> books = bookDao.fetch(offset * limit, limit);
+        List<Book> books = bookDao.fetch(offset * limit, limit, OrderType.valueOf(sort.toUpperCase()), desc);
         List<BookDto> bookDtos = books.stream()
                 .map(this::buildBookDtoFromEntity)
                 .collect(Collectors.toList());
-        PageDto<BookDto> pageDto = buildPageDto(bookDtos, offset, limit, totalCount);
-        return pageDto;
+        return buildPageDto(bookDtos, offset, limit, totalCount);
     }
 
     public void takeBook(String isn, Integer userId) throws NotFoundException {
