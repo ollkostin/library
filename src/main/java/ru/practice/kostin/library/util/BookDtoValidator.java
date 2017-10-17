@@ -5,7 +5,7 @@ import ru.practice.kostin.library.service.dto.BookDto;
 public class BookDtoValidator {
 
     public static void validateBookDto(BookDto bookDto) throws IllegalArgumentException {
-        if (validateIsn(bookDto.getIsn())) {
+        if (!validateIsn(bookDto.getIsn())) {
             throw new IllegalArgumentException("isn");
         }
         if (bookDto.getName() == null || bookDto.getName().isEmpty()) {
@@ -16,20 +16,20 @@ public class BookDtoValidator {
         }
     }
 
-    public static boolean validateIsn(String isbn) {
-        if (isbn == null) {
-            return false;
+    private static boolean validateIsn(String isn) {
+        if (isn == null) {
+            throw new IllegalArgumentException("isn");
         }
 
-        isbn = isbn.replaceAll("-", "");
+        isn = isn.replaceAll("-", "");
 
-        if (isbn.length() != 13) {
-            return false;
+        if (isn.length() != 13) {
+            throw new IllegalArgumentException("isn");
         }
         try {
             int tot = 0;
             for (int i = 0; i < 12; i++) {
-                int digit = Integer.parseInt(isbn.substring(i, i + 1));
+                int digit = Integer.parseInt(isn.substring(i, i + 1));
                 tot += (i % 2 == 0) ? digit : digit * 3;
             }
 
@@ -38,9 +38,9 @@ public class BookDtoValidator {
                 checksum = 0;
             }
 
-            return checksum == Integer.parseInt(isbn.substring(12));
+            return checksum == Integer.parseInt(isn.substring(12));
         } catch (NumberFormatException nfe) {
-            return false;
+            throw new IllegalArgumentException("isn");
         }
     }
 }

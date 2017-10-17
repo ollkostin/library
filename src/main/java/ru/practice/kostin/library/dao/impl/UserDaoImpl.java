@@ -68,13 +68,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void update(User user) {
-        jdbcTemplate.update(UPDATE, user.getUsername(), user.getPasswordHash(), user.getId());
+    public int update(User user) {
+        return jdbcTemplate.update(UPDATE, user.getUsername(), user.getPasswordHash(), user.getId());
     }
 
     @Override
-    public void delete(Integer id) {
-        jdbcTemplate.update(DELETE, new Object[]{id});
+    public int delete(Integer id) {
+        return jdbcTemplate.update(DELETE, new Object[]{id});
     }
 
     @Autowired

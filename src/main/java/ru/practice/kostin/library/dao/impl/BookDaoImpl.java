@@ -2,10 +2,10 @@ package ru.practice.kostin.library.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.practice.kostin.library.dao.BookDao;
+import ru.practice.kostin.library.dao.rowmapper.BookMapper;
 import ru.practice.kostin.library.dao.extractor.ListBookResultSetExtractor;
 import ru.practice.kostin.library.model.Book;
 import ru.practice.kostin.library.service.type.OrderType;
@@ -18,7 +18,7 @@ public class BookDaoImpl implements BookDao {
             "FROM book b " +
             "LEFT JOIN user u ON u.id = b.user_id ";
     private String LIMIT_OFFSET = " LIMIT ? OFFSET ?";
-    private String GET = "SELECT b.isn, b.name, b.author, b.user_id, u.id, u.username " +
+    private String GET = "SELECT b.isn, b.name, b.author, u.id, u.username " +
             "FROM book b " +
             "LEFT JOIN user u ON u.id = b.user_id " +
             "WHERE b.isn = ?";
@@ -36,6 +36,7 @@ public class BookDaoImpl implements BookDao {
     private JdbcTemplate jdbcTemplate;
 
     private ListBookResultSetExtractor listBookResultSetExtractor = new ListBookResultSetExtractor();
+    private BookMapper bookMapper = new BookMapper();
 
     @Override
     public int count() {
@@ -69,7 +70,7 @@ public class BookDaoImpl implements BookDao {
         Book book;
         try {
             book = jdbcTemplate
-                    .queryForObject(GET, new Object[]{isn}, new BeanPropertyRowMapper<>(Book.class));
+                    .queryForObject(GET, new Object[]{isn}, bookMapper);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -77,20 +78,19 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public String insert(Book book) {
-        jdbcTemplate.update(INSERT, book.getIsn(), book.getName(), book.getAuthor());
-        return book.getIsn();
+    public int insert(Book book) {
+        return jdbcTemplate.update(INSERT, book.getIsn(), book.getName(), book.getAuthor());
     }
 
     @Override
-    public void update(Book book) {
-        jdbcTemplate.update(UPDATE,
+    public int update(Book book) {
+        return jdbcTemplate.update(UPDATE,
                 new Object[]{book.getName(), book.getAuthor(), book.getUser() != null ? book.getUser().getId() : null, book.getIsn()});
     }
 
     @Override
-    public void delete(String isn) {
-        jdbcTemplate.update(DELETE, new Object[]{isn});
+    public int delete(String isn) {
+        return jdbcTemplate.update(DELETE, new Object[]{isn});
     }
 
     @Autowired

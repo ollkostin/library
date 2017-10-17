@@ -158,15 +158,44 @@ function onClickEditBook() {
 }
 
 function bookError(resp) {
-    if (resp.responseJSON.code === "400" && resp.responseJSON.message === 'user') {
-        alert('Пользователь не был найден');
-    } else if (resp.responseJSON.code === "409") {
-        if (resp.responseJSON.message === 'isn')
+    let code = resp.responseJSON.code;
+    let msg = resp.responseJSON.message;
+    if (code === '400') {
+        if (msg === 'isn') {
             alert('ISN не указан или указан неверно');
-        else if (resp.responseJSON.message === 'book')
+        }
+        if (msg === 'author') {
+            alert('Автор не указан');
+        }
+        if (msg === 'name') {
+            alert('Название не указано');
+        }
+    } else if (code === '404') {
+        if (msg === 'book') {
+            alert('Книга не была найдена');
+        }
+        if (msg === 'user') {
+            alert('Пользователь не был найден');
+        }
+    }
+    if (code === '409') {
+        if (msg === 'book') {
             alert('Книга с указанным ISN уже существует');
-    } else if (resp.responseJSON.code === '500') {
-        alert(resp.responseJSON.message);
+        }
+    }
+    if (code === '406') {
+        if (msg === 'taken') {
+            alert('Книга уже взята');
+        }
+        if (msg === 'returned') {
+            alert('Книга уже возвращена');
+        }
+        if (msg === 'user mismatch') {
+            alert('Недопустимая операция, книгу взял другой пользователь');
+        }
+    }
+    if (code === '500') {
+        alert('Внутренняя ошибка сервера : ' + msg);
     }
 }
 
