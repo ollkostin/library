@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
+import ru.practice.kostin.library.exception.NotAcceptableException;
 import ru.practice.kostin.library.exception.UserAlreadyExistsException;
 import ru.practice.kostin.library.service.dto.ErrorDto;
 
@@ -38,4 +39,9 @@ public class ErrorHandlerController {
         return new ErrorDto("500", e.getMessage());
     }
 
+    @ExceptionHandler(NotAcceptableException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ErrorDto notAcceptableException(NotAcceptableException e) {
+        return new ErrorDto("406", e.getMessage());
+    }
 }

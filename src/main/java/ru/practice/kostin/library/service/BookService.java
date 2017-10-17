@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practice.kostin.library.dao.BookDao;
 import ru.practice.kostin.library.dao.UserDao;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
+import ru.practice.kostin.library.exception.NotAcceptableException;
 import ru.practice.kostin.library.model.Book;
 import ru.practice.kostin.library.model.User;
 import ru.practice.kostin.library.service.dto.BookDto;
@@ -14,7 +15,6 @@ import ru.practice.kostin.library.service.type.OrderType;
 import ru.practice.kostin.library.util.BookDtoValidator;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +33,12 @@ public class BookService {
 
     public void takeBook(String isn, Integer userId) throws NotFoundException {
         Book book = bookDao.get(isn);
+        if (book == null) {
+            throw new NotFoundException("book");
+        }
+        if (book.getUser() != null) {
+            throw new NotAcceptableException("taken");
+        }
         User user = userDao.getById(userId);
         if (user == null) {
             throw new NotFoundException("user");
@@ -43,9 +49,18 @@ public class BookService {
 
     public void returnBook(String isn, Integer userId) throws NotFoundException {
         Book book = bookDao.get(isn);
+        if (book == null) {
+            throw new NotFoundException("book");
+        }
+        if (book.getUser() == null) {
+            throw new NotAcceptableException("returned");
+        }
         User user = userDao.getById(userId);
         if (user == null) {
             throw new NotFoundException("user");
+        }
+        if (!book.getUser().getId().equals(user.getId())) {
+            throw new NotAcceptableException("user mismatch");
         }
         book.setUser(null);
         bookDao.update(book);
