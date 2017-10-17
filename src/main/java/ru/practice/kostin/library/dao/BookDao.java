@@ -15,9 +15,9 @@ public interface BookDao {
 
     Book get(String isn);
 
-    String insert(Book book);
+    int insert(Book book);
 
-    void update(Book book);
+    int update(Book book);
 
-    void delete(String isn);
+    int delete(String isn);
 }

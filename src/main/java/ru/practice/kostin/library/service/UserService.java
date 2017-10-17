@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.practice.kostin.library.dao.UserDao;
+import ru.practice.kostin.library.exception.AffectedRowsCountMismatchException;
 import ru.practice.kostin.library.exception.UserAlreadyExistsException;
 import ru.practice.kostin.library.model.User;
 import ru.practice.kostin.library.service.dto.UserDto;
@@ -18,12 +19,14 @@ public class UserService {
     private UserDao userDao;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
     public List<UserDto> getUsers() {
         List<User> users = userDao.fetch();
         return users.stream()
                 .map(this::buildUserDtoFromEntity)
                 .collect(Collectors.toList());
     }
+
 
     public User getUserByUsername(String username) {
         return userDao.getByUsername(username);
@@ -36,31 +39,40 @@ public class UserService {
         return userDto;
     }
 
-    public void deleteUser(Integer id) throws NotFoundException {
+
+    public int deleteUser(Integer id) throws NotFoundException, AffectedRowsCountMismatchException {
         User user = userDao.getById(id);
         if (user == null) {
             throw new NotFoundException("user");
         }
-        userDao.delete(id);
+        int affectedRowsCount = userDao.delete(id);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("delete error");
+        }
+        return affectedRowsCount;
     }
 
-    public void editUser(UserDto userDto) throws IllegalArgumentException, NotFoundException {
+    public int editUser(UserDto userDto) throws IllegalArgumentException, UserAlreadyExistsException, NotFoundException, AffectedRowsCountMismatchException {
         UserDtoValidator.validateUserDto(userDto);
         User user = userDao.getById(userDto.getId());
         if (user == null) {
             throw new NotFoundException("user");
         }
-        User userByUsername = getUserByUsername(userDto.getUsername());
+        User userByUsername = userDao.getByUsername(userDto.getUsername());
         if (userByUsername != null && !user.getId().equals(userByUsername.getId())) {
             throw new UserAlreadyExistsException("exists");
         }
         user.setUsername(userDto.getUsername());
         user.setPasswordHash(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        userDao.update(userByUsername);
+        int affectedRowsCount = userDao.update(user);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("update error");
+        }
+        return affectedRowsCount;
     }
 
 
-    public Integer createUser(UserDto userDto) throws IllegalArgumentException, UserAlreadyExistsException {
+    public int createUser(UserDto userDto) throws IllegalArgumentException, UserAlreadyExistsException {
         UserDtoValidator.validateUserDto(userDto);
         User user = userDao.getByUsername(userDto.getUsername());
         if (user != null) {

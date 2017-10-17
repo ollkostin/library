@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
+import ru.practice.kostin.library.exception.AffectedRowsCountMismatchException;
 import ru.practice.kostin.library.exception.NotAcceptableException;
 import ru.practice.kostin.library.exception.UserAlreadyExistsException;
 import ru.practice.kostin.library.service.dto.ErrorDto;
@@ -33,7 +34,7 @@ public class ErrorHandlerController {
         return new ErrorDto("400", e.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class, AffectedRowsCountMismatchException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto internalServerError(Exception e) {
         return new ErrorDto("500", e.getMessage());

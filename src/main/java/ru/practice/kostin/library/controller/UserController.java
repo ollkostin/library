@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
+import ru.practice.kostin.library.exception.AffectedRowsCountMismatchException;
 import ru.practice.kostin.library.exception.UserAlreadyExistsException;
 import ru.practice.kostin.library.security.UserDetailsImpl;
 import ru.practice.kostin.library.service.UserService;
@@ -35,14 +36,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteUser(@PathVariable("id") Integer id) throws NotFoundException {
+    public ResponseEntity deleteUser(@PathVariable("id") Integer id) throws NotFoundException, AffectedRowsCountMismatchException {
         userService.deleteUser(id);
         return ok().build();
     }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createUser(@RequestBody UserDto userDto) throws IllegalArgumentException, UserAlreadyExistsException {
-        Integer userId = userService.createUser(userDto);
+        int userId = userService.createUser(userDto);
         UriComponents uri = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(userId);
@@ -50,7 +51,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity editUser(@RequestBody UserDto userDto) throws IllegalArgumentException, NotFoundException {
+    public ResponseEntity editUser(@RequestBody UserDto userDto) throws IllegalArgumentException, NotFoundException, AffectedRowsCountMismatchException {
         userService.editUser(userDto);
         return ok().build();
     }

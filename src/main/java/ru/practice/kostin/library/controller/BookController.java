@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
+import ru.practice.kostin.library.exception.AffectedRowsCountMismatchException;
 import ru.practice.kostin.library.security.UserDetailsImpl;
 import ru.practice.kostin.library.service.BookService;
 import ru.practice.kostin.library.service.dto.BookDto;
@@ -31,7 +32,7 @@ public class BookController {
     }
 
     @PostMapping("/{isn}/take")
-    public ResponseEntity takeBook(@PathVariable("isn") String isn) throws NotFoundException {
+    public ResponseEntity takeBook(@PathVariable("isn") String isn) throws NotFoundException, AffectedRowsCountMismatchException {
         UserDetailsImpl userDetails = (UserDetailsImpl)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         bookService.takeBook(isn, userDetails.getId());
@@ -39,7 +40,7 @@ public class BookController {
     }
 
     @PostMapping("/{isn}/return")
-    public ResponseEntity returnBook(@PathVariable("isn") String isn) throws NotFoundException {
+    public ResponseEntity returnBook(@PathVariable("isn") String isn) throws NotFoundException, AffectedRowsCountMismatchException {
         UserDetailsImpl userDetails = (UserDetailsImpl)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         bookService.returnBook(isn, userDetails.getId());
@@ -47,22 +48,22 @@ public class BookController {
     }
 
     @DeleteMapping("/{isn}")
-    public ResponseEntity deleteBook(@PathVariable("isn") String isn) {
+    public ResponseEntity deleteBook(@PathVariable("isn") String isn) throws NotFoundException, AffectedRowsCountMismatchException {
         bookService.deleteBook(isn);
         return ok().build();
     }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity createBook(@RequestBody BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
-        String isn = bookService.createBook(bookDto);
+    public ResponseEntity createBook(@RequestBody BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException, AffectedRowsCountMismatchException {
+        bookService.createBook(bookDto);
         UriComponents uri = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(isn);
+                .buildAndExpand(bookDto.getIsn());
         return created(uri.toUri()).build();
     }
 
     @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity editBook(@RequestBody BookDto bookDto) throws IllegalArgumentException {
+    public ResponseEntity editBook(@RequestBody BookDto bookDto) throws IllegalArgumentException, NotFoundException, AffectedRowsCountMismatchException {
         bookService.editBook(bookDto);
         return ok().build();
     }

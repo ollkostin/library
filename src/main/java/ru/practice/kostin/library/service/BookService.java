@@ -3,9 +3,11 @@ package ru.practice.kostin.library.service;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practice.kostin.library.dao.BookDao;
 import ru.practice.kostin.library.dao.UserDao;
 import ru.practice.kostin.library.exception.BookAlreadyExistsException;
+import ru.practice.kostin.library.exception.AffectedRowsCountMismatchException;
 import ru.practice.kostin.library.exception.NotAcceptableException;
 import ru.practice.kostin.library.model.Book;
 import ru.practice.kostin.library.model.User;
@@ -22,6 +24,7 @@ public class BookService {
     private BookDao bookDao;
     private UserDao userDao;
 
+
     public PageDto<BookDto> getBooks(int offset, int limit, String sort, boolean desc) {
         int totalCount = bookDao.count();
         List<Book> books = bookDao.fetch(offset * limit, limit, OrderType.valueOf(sort.toUpperCase()), desc);
@@ -31,7 +34,9 @@ public class BookService {
         return buildPageDto(bookDtos, offset, limit, totalCount);
     }
 
-    public void takeBook(String isn, Integer userId) throws NotFoundException {
+
+    public int takeBook(String isn, Integer userId)
+            throws NotFoundException, NotAcceptableException, AffectedRowsCountMismatchException {
         Book book = bookDao.get(isn);
         if (book == null) {
             throw new NotFoundException("book");
@@ -44,10 +49,15 @@ public class BookService {
             throw new NotFoundException("user");
         }
         book.setUser(user);
-        bookDao.update(book);
+        int affectedRowsCount = bookDao.update(book);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("update error");
+        }
+        return affectedRowsCount;
     }
 
-    public void returnBook(String isn, Integer userId) throws NotFoundException {
+
+    public int returnBook(String isn, Integer userId) throws NotFoundException, NotAcceptableException, AffectedRowsCountMismatchException {
         Book book = bookDao.get(isn);
         if (book == null) {
             throw new NotFoundException("book");
@@ -63,26 +73,54 @@ public class BookService {
             throw new NotAcceptableException("user mismatch");
         }
         book.setUser(null);
-        bookDao.update(book);
+        int affectedRowsCount = bookDao.update(book);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("update error");
+        }
+        return affectedRowsCount;
     }
 
-    public String createBook(BookDto bookDto) throws BookAlreadyExistsException, IllegalArgumentException {
+
+    public int createBook(BookDto bookDto) throws BookAlreadyExistsException, AffectedRowsCountMismatchException {
         BookDtoValidator.validateBookDto(bookDto);
         Book book = bookDao.get(bookDto.getIsn());
         if (book != null) {
             throw new BookAlreadyExistsException("book");
         }
         book = buildBookEntityFromDto(bookDto);
-        return bookDao.insert(book);
+        int affectedRowsCount = bookDao.insert(book);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("insert error");
+        }
+        return affectedRowsCount;
     }
 
-    public void deleteBook(String isn) {
-        bookDao.delete(isn);
+
+    public int deleteBook(String isn) throws NotFoundException, AffectedRowsCountMismatchException {
+        Book book = bookDao.get(isn);
+        if (book == null) {
+            throw new NotFoundException("book");
+        }
+        int affectedRowsCount = bookDao.delete(isn);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("delete error");
+        }
+        return affectedRowsCount;
     }
 
-    public void editBook(BookDto bookDto) throws IllegalArgumentException {
+
+    public int editBook(BookDto bookDto) throws NotFoundException, AffectedRowsCountMismatchException {
         BookDtoValidator.validateBookDto(bookDto);
-        bookDao.update(buildBookEntityFromDto(bookDto));
+        Book book = bookDao.get(bookDto.getIsn());
+        if (book == null) {
+            throw new NotFoundException("book");
+        }
+        book = buildBookEntityFromDto(bookDto);
+        int affectedRowsCount = bookDao.update(book);
+        if (affectedRowsCount != 1) {
+            throw new AffectedRowsCountMismatchException("update error");
+        }
+        return affectedRowsCount;
     }
 
     private BookDto buildBookDtoFromEntity(Book book) {
@@ -120,12 +158,8 @@ public class BookService {
     }
 
     @Autowired
-    public void setBookDao(BookDao bookDao) {
+    public BookService(BookDao bookDao, UserDao userDao) {
         this.bookDao = bookDao;
-    }
-
-    @Autowired
-    public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 }

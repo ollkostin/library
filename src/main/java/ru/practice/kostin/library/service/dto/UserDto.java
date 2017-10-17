@@ -8,6 +8,20 @@ public class UserDto {
     private String username;
     private String password;
 
+    public UserDto(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserDto(Integer id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserDto(){
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

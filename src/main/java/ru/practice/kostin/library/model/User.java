@@ -27,13 +27,12 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         User user = (User) o;
 
-        if (!getId().equals(user.getId())) return false;
-        if (!getUsername().equals(user.getUsername())) return false;
-        return getPasswordHash().equals(user.getPasswordHash());
+        if (username != null ? !username.equals(user.username) : user.username != null) return false;
+        return passwordHash != null ? passwordHash.equals(user.passwordHash) : user.passwordHash == null;
     }
 
     @Override
