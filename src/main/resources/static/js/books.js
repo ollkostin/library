@@ -22,7 +22,7 @@ function showBooks(response, mapper) {
     params.offset = response.offset;
     params.limit = response.limit;
     totalCount = response.totalCount;
-    if (totalCount === (params.offset + 1) * params.limit)
+    if (totalCount <= (params.offset + 1) * params.limit)
         $('#show-more').hide();
     else
         params.offset++;
@@ -165,10 +165,10 @@ function bookError(resp) {
             alert('ISN не указан или указан неверно');
         }
         if (msg === 'author') {
-            alert('Автор не указан');
+            alert('Автор не указан или указан неверно (Допустимый размер строки (255 символов))');
         }
         if (msg === 'name') {
-            alert('Название не указано');
+            alert('Название не указано или указано неверно (Допустимый размер строки (255 символов)');
         }
     } else if (code === '404') {
         if (msg === 'book') {
@@ -210,6 +210,7 @@ function onClickSortByAuthor() {
     $('#td-author').removeClass('sort-desc sort-asc')
         .addClass(ascAuthor ? 'sort-desc' : 'sort-asc');
     $('#books').empty();
+    $('#show-more').show();
     getMoreBooks(params, showBooks);
     ascAuthor = !ascAuthor;
 }
@@ -225,6 +226,7 @@ function onClickSortByName() {
     $('#td-name').removeClass('sort-desc sort-asc')
         .addClass(ascName ? 'sort-desc' : 'sort-asc');
     $('#books').empty();
+    $('#show-more').show();
     getMoreBooks(params, showBooks);
     ascName = !ascName;
 }

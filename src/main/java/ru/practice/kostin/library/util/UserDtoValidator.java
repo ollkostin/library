@@ -5,7 +5,7 @@ import ru.practice.kostin.library.service.dto.UserDto;
 public class UserDtoValidator {
 
     public static void validateUserDto(UserDto userDto) throws IllegalArgumentException {
-        if (userDto.getUsername() == null || userDto.getUsername().isEmpty()) {
+        if (userDto.getUsername() == null || userDto.getUsername().isEmpty() || userDto.getUsername().length() > 30) {
             throw new IllegalArgumentException("username");
         }
         if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
