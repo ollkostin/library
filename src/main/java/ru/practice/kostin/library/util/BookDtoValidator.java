@@ -8,10 +8,10 @@ public class BookDtoValidator {
         if (!validateIsn(bookDto.getIsn())) {
             throw new IllegalArgumentException("isn");
         }
-        if (bookDto.getName() == null || bookDto.getName().isEmpty()) {
+        if (bookDto.getName() == null || bookDto.getName().isEmpty() || bookDto.getName().length() > 255) {
             throw new IllegalArgumentException("name");
         }
-        if (bookDto.getAuthor() == null || bookDto.getAuthor().isEmpty()) {
+        if (bookDto.getAuthor() == null || bookDto.getAuthor().isEmpty() || bookDto.getAuthor().length() > 255) {
             throw new IllegalArgumentException("author");
         }
     }

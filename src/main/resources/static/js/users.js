@@ -55,7 +55,7 @@ function onClickCreateUser() {
 function userError(resp) {
     if (resp.responseJSON.code === '400') {
         if (resp.responseJSON.message === 'username')
-            alert('Имя пользователя не указано');
+            alert('Имя пользователя не указано или указано неверно (Допустимый размер строки (30 символов)');
         else if (resp.responseJSON.message === 'password')
             alert('Пароль не указан');
     } else if (resp.responseJSON.code === '409' && resp.responseJSON.message === 'exists') {

@@ -1,0 +1,184 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: kostin
+      changes:
+        - dropTable:
+            tableName: user
+        - dropTable :
+            tableName: book
+
+  - changeSet:
+      id: 2
+      author: kostin
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(30)
+                  constraints:
+                    unique : true
+                    nullable: false
+              - column:
+                  name: password_hash
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+                    tableName: book
+                    columns:
+                      - column:
+                          name: isn
+                          type: varchar(20)
+                          constraints:
+                            primaryKey: true
+                            nullable: false
+                      - column:
+                          name: name
+                          type: varchar(255)
+                          constraints:
+                            nullable: false
+                      - column:
+                          name: author
+                          type: varchar(255)
+                          constraints:
+                            nullable: false
+                      - column:
+                          name: user_id
+                          type: int
+                          defaultValue: null
+        - addForeignKeyConstraint:
+              baseColumnNames: user_id
+              baseTableName: book
+              constraintName: fk_book_user
+              onDelete: SET NULL
+              referencedColumnNames: id
+              referencedTableName: user
+
+  - changeSet:
+        id: 3
+        author: kostin
+        changes:
+          - insert:
+              tableName: user
+              columns:
+                - column:
+                    name: id
+                    value: 1
+                - column:
+                    name: username
+                    value: user1
+                - column:
+                    name: password_hash
+                    value: $2a$04$wdef30mrmL7L4N/jF9quN.7ad9dnAoAINCBulFRC.w3w6vRU96sBO
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-17-094274-9
+                - column:
+                    name: name
+                    value: 'Как это устроено?'
+                - column:
+                    name: author
+                    value: 'А.Спектор'
+                - column:
+                    name: user_id
+                    value: 1
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-91045-040-4
+                - column:
+                    name: name
+                    value: 'Магистр рассеянных наук'
+                - column:
+                    name: author
+                    value: 'В. Левшин'
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-17-084621-4
+                - column:
+                    name: name
+                    value: 'Коралина в стране кошмаров'
+                - column:
+                    name: author
+                    value: 'Н. Гейман'
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-353-00122-1
+                - column:
+                    name: name
+                    value: 'Занимательные опыты и фокусы'
+                - column:
+                    name: author
+                    value: 'Т.Тит'
+                - column:
+                    name: user_id
+                    value: 1
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-91339-316-6
+                - column:
+                    name: name
+                    value: 'Подростки Мутанты Ниндзя Черепашки, выпуск 9'
+                - column:
+                    name: author
+                    value: 'И.Валтс'
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-389-10977-3
+                - column:
+                    name: name
+                    value: 'Бэтмен. Убийственная шутка.'
+                - column:
+                    name: author
+                    value: 'А.Мур'
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-0-385-60441-3
+                - column:
+                    name: name
+                    value: 'The Book of Dust: Volume One: La Belle Sauvage'
+                - column:
+                    name: author
+                    value: 'Ф.Пулман'
+          - insert:
+              tableName: book
+              columns:
+                - column:
+                    name: isn
+                    value: 978-5-389-13774-5
+                - column:
+                    name: name
+                    value: 'Бэтмен: Харли Квинн'
+                - column:
+                    name: author
+                    value: 'П.Дини'
