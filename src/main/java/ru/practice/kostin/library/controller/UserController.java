@@ -28,11 +28,11 @@ public class UserController {
         return ok(userService.getUsers());
     }
 
-    @GetMapping("/currentUsername")
-    public ResponseEntity getCurrentUsername() {
+    @GetMapping("/currentUser")
+    public ResponseEntity getCurrentUser() {
         UserDetailsImpl userDetails = (UserDetailsImpl)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ok(userDetails.getUsername());
+        return ok(new UserDto(userDetails.getId(),userDetails.getUsername()));
     }
 
     @DeleteMapping("/{id}")

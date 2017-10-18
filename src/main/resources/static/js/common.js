@@ -8,10 +8,10 @@ function buildTableData(value, mapper) {
     return td;
 }
 
-function getCurrentUserId(success, error) {
+function getCurrentUser(success, error) {
     $.ajax({
         type: 'GET',
-        url: 'api/user/currentUsername',
+        url: 'api/user/currentUser',
         success: success,
         error: error
     });

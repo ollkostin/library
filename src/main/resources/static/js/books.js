@@ -8,7 +8,7 @@ $('#books').on('click', '.return-book', onClickReturnBook);
 $('#modal-window').on('hidden.bs.modal', clearBookModalValues);
 
 $(document).ready(function () {
-    getCurrentUserId(function (username) {
+    getCurrentUser(function (username) {
         currentUsername = username;
     });
     params = {

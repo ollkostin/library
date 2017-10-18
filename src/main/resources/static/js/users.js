@@ -1,7 +1,11 @@
 let users = $('#users');
+let currentUserId;
 
 $('#modal-window').on('hidden.bs.modal', clearUserModalValues);
 $(document).ready(function () {
+    getCurrentUser(function (user) {
+        currentUserId = user.id;
+    });
     getUsers(showUsers, userTableRowMapper, null);
 });
 
@@ -31,9 +35,15 @@ function onDeleteUserButtonClick() {
     let currentRow = $(this).closest("tr");
     let idCell = currentRow.find("td:eq(0)");
     let id = idCell.text();
-    if (confirm("Удалить пользователя?")) {
+    let isIdEqCurrentId = Number(id) === currentUserId;
+    let message = isIdEqCurrentId ?
+        "Хотите удалить свою учетную запись?" : "Удалить учетную запись пользователя?";
+    if (confirm(message)) {
         deleteUser(id, function (resp) {
             currentRow.remove();
+            if (isIdEqCurrentId) {
+                location.assign('logout');
+            }
         }, userError);
     }
 }
